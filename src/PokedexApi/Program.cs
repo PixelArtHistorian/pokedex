@@ -1,17 +1,38 @@
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSerilog();
 
-var app = builder.Build();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
-if (app.Environment.IsDevelopment())
+Log.Information("Starting application");
+
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.MapGet("/", () => "Hello World!")
+        .WithOpenApi();
+
+    app.Run();
 }
-
-app.MapGet("/", () => "Hello World!")
-    .WithOpenApi();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}
