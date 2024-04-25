@@ -1,3 +1,7 @@
+using PokedexApi.Domain;
+using PokedexApi.Domain.Interfaces;
+using PokedexApi.Domain.Models;
+using PokedexApi.Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +19,12 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    builder.Services.AddHttpClient();
+
+    //register pokemon information service
+    builder.Services.AddScoped<IPokemonInformationService, PokemonInformationService>();
+    builder.Services.AddScoped<IMapper<PokemonResponse,PokemonInformation>, PokemonMapper>();
+
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment())
@@ -23,7 +33,10 @@ try
         app.UseSwaggerUI();
     }
 
-    app.MapGet("/", () => "Hello World!")
+    app.MapGet("/pokemon/{pokemonName}", (string pokemonName, IPokemonInformationService service) =>
+        {
+            return service.GetPokemonInformationAsync(pokemonName);
+        })
         .WithOpenApi();
 
     app.Run();
