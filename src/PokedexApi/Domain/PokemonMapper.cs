@@ -1,6 +1,6 @@
 ﻿using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
-using PokedexApi.Infrastructure;
+using PokedexApi.Infrastructure.DTO;
 using System.Text.RegularExpressions;
 
 namespace PokedexApi.Domain

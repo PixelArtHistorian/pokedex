@@ -4,6 +4,6 @@ namespace PokedexApi.Domain.Interfaces
 {
     public interface IPokemonInformationService
     {
-        Task<PokemonInformation> GetPokemonInformationAsync(string pokemonName);
+        Task<IResult> GetPokemonInformationAsync(string pokemonName);
     }
 }

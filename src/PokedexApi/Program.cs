@@ -1,7 +1,8 @@
+using FluentValidation;
 using PokedexApi.Domain;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
-using PokedexApi.Infrastructure;
+using PokedexApi.Infrastructure.DTO;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,14 +17,16 @@ Log.Information("Starting application");
 
 try
 {
+    builder.Services.AddSerilog();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-
     builder.Services.AddHttpClient();
 
     //register pokemon information service
     builder.Services.AddScoped<IPokemonInformationService, PokemonInformationService>();
+    builder.Services.AddScoped<IValidator<string>, PokemonNameValidator>();
     builder.Services.AddScoped<IMapper<PokemonResponse,PokemonInformation>, PokemonMapper>();
+
 
     var app = builder.Build();
 
