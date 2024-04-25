@@ -6,7 +6,7 @@ builder.Services.AddSerilog();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 Log.Information("Starting application");
 
