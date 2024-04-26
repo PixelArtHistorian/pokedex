@@ -2,6 +2,6 @@
 {
     public interface ITranslationClient
     {
-        Task<HttpResponseMessage> TranslateTextAsync(string pokemonDescription);
+        Task<HttpResponseMessage> TranslateTextAsync(string translationEndpoint, string textToTranslate);
     }
 }
