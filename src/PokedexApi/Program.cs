@@ -27,7 +27,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddHttpClient();
-    
+
     builder.Services.ConfigureHttpJsonOptions(options =>
     {
         options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
@@ -47,11 +47,21 @@ try
         app.UseSwaggerUI();
     }
 
-    app.MapGet("/pokemon/{pokemonName}", (string pokemonName, IPokemonInformationService service) =>
-        {
+    var pokemomRouteBuilder = app.MapGroup("/pokemon");
+
+    pokemomRouteBuilder.MapGet("/{pokemonName}", (string pokemonName, IPokemonInformationService service) =>
+    {
             return service.GetPokemonInformationAsync(pokemonName);
-        })
-        .WithOpenApi();
+    })
+    .WithOpenApi();
+
+    pokemomRouteBuilder.MapGet("/translated/{pokemonName}", async (string pokemonName) =>
+    {
+        var client = new YodaTranslatorClient(new HttpClient());
+        var translation = await client.TranslatetextAsync(pokemonName);
+        return translation;
+    })
+    .WithOpenApi();
 
     app.Run();
 }
