@@ -39,8 +39,9 @@ try
     builder.Services.AddScoped<IPokemonSpeciesClient, PokemonSpeciesClient>();
     builder.Services.AddScoped<IValidator<string>, PokemonNameValidator>();
     builder.Services.AddScoped<IMapper<PokemonResponse,PokemonInformation>, PokemonMapper>();
-    builder.Services.AddKeyedScoped<IPokemonInformationService, PokemonInformationService>("InformationService");
-    builder.Services.AddKeyedScoped<IPokemonInformationService, PokemonTranslationService>("TranslationService");
+    builder.Services.AddScoped<IPokemonInformationService, PokemonInformationService>();
+    builder.Services.AddScoped<ITranslationClient, YodaTranslationClient>();
+    builder.Services.AddScoped<IPokemonTranslationService, PokemonTranslationService>();
 
     var app = builder.Build();
 
@@ -54,7 +55,7 @@ try
 
     pokemomRouteBuilder.MapGet(
         "/{pokemonName}", 
-        async (string pokemonName, [FromKeyedServices("InformationService")]IPokemonInformationService service) =>
+        async (string pokemonName, IPokemonInformationService service) =>
     {
         var result = await service.GetPokemonInformationAsync(pokemonName);
         return result.ToMinimalApiResult();
@@ -63,11 +64,10 @@ try
 
     pokemomRouteBuilder.MapGet(
         "/translated/{pokemonName}",
-        async (string pokemonName, [FromKeyedServices("InformationService")] IPokemonInformationService service) =>
+        async (string pokemonName, IPokemonTranslationService service) =>
     {
-        var client = new YodaTranslatorClient(new HttpClient());
-        var translation = await client.TranslatetextAsync(pokemonName);
-        return translation;
+        var result = await service.GetPokemonInformationTranslationAsync(pokemonName);
+        return result.ToMinimalApiResult();
     })
     .WithOpenApi();
 

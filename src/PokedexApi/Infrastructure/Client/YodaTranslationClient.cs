@@ -2,16 +2,16 @@
 
 namespace PokedexApi.Infrastructure.Client
 {
-    public class YodaTranslatorClient : ITranslatorClient
+    public class YodaTranslationClient : ITranslationClient
     {
         private HttpClient _client;
         private readonly string _baseUri = "https://api.funtranslations.com/translate/yoda.json";
-        public YodaTranslatorClient(HttpClient httpClient)
+        public YodaTranslationClient(HttpClient httpClient)
         {
             _client = httpClient;
             _client.BaseAddress = new Uri(_baseUri);
         }
-        public Task<HttpResponseMessage> TranslatetextAsync(string textToTranslate)
+        public Task<HttpResponseMessage> TranslateTextAsync(string textToTranslate)
         {
             var requestContent = new FormUrlEncodedContent(new[]
             {

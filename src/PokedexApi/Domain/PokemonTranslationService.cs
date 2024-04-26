@@ -1,23 +1,58 @@
 ﻿using Ardalis.Result;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
+using PokedexApi.Infrastructure.Client;
+using PokedexApi.Infrastructure.DTO;
 
 namespace PokedexApi.Domain
 {
-    public class PokemonTranslationService: IPokemonInformationService
+    public class PokemonTranslationService: IPokemonTranslationService
     {
-        IPokemonInformationService _pokemonInformationService { get; set; }
-        ILogger _logger { get; set; }
-        public PokemonTranslationService(IPokemonInformationService pokemonInformationService, ILogger logger)
+        IPokemonInformationService _pokemonInformationService;
+        ITranslationClient _translatorClient;
+        ILogger _logger;
+        public PokemonTranslationService(
+            IPokemonInformationService pokemonInformationService,  
+            ITranslationClient translatorClient, 
+            ILogger<PokemonTranslationService> logger)
         {
             _pokemonInformationService = pokemonInformationService;
+            _translatorClient = translatorClient;
             _logger = logger;
         }
 
-
-        Task<Result<PokemonInformation>> IPokemonInformationService.GetPokemonInformationAsync(string pokemonName)
+        public async Task<Result<PokemonInformation>> GetPokemonInformationTranslationAsync(string pokemonName)
         {
-            throw new NotImplementedException();
+            var pokemonInformation = await _pokemonInformationService.GetPokemonInformationAsync(pokemonName);
+            if (!pokemonInformation.IsSuccess)
+            {
+                return pokemonInformation;
+            }
+
+            try
+            {
+                var response = await _translatorClient.TranslateTextAsync(pokemonInformation.Value.Description);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogDebug("Could not translate description {@pokemonInformation.Value}", pokemonInformation.Value);
+                    return pokemonInformation;
+                }
+            
+                var translationResponse = await response.Content.ReadFromJsonAsync<TranslationResponse>();
+                if(translationResponse is null)
+                {
+                    _logger.LogDebug("Could not parse translation {@response}", response);
+                    return pokemonInformation;
+                }
+                var translatedInformation = pokemonInformation.Value with { Description = translationResponse.contents.translated };     
+            
+                return Result.Success(translatedInformation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unhandled exception {@ex}", ex);
+                return pokemonInformation;
+            }
         }
     }
 }
