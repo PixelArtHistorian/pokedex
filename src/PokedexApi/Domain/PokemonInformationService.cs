@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Ardalis.Result.FluentValidation;
 using FluentValidation;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
@@ -36,9 +37,7 @@ namespace PokedexApi.Domain
             var validationResult = await _validator.ValidateAsync(pokemonName);
             if (!validationResult.IsValid)
             {
-                return Result.Invalid(validationResult.Errors
-                    .Select(x => new ValidationError(x.ErrorMessage))
-                    .ToArray());
+                return Result.Invalid(validationResult.AsErrors());
             }
 
             try
