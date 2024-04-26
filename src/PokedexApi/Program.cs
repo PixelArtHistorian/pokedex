@@ -2,6 +2,7 @@ using FluentValidation;
 using PokedexApi.Domain;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
+using PokedexApi.Infrastructure.Client;
 using PokedexApi.Infrastructure.DTO;
 using Serilog;
 
@@ -28,10 +29,10 @@ try
     builder.Services.AddHttpClient();
 
     //register pokemon information service
-    builder.Services.AddScoped<IPokemonInformationService, PokemonInformationService>();
+    builder.Services.AddScoped<IPokemonSpeciesClient, PokemonSpeciesClient>();
     builder.Services.AddScoped<IValidator<string>, PokemonNameValidator>();
     builder.Services.AddScoped<IMapper<PokemonResponse,PokemonInformation>, PokemonMapper>();
-
+    builder.Services.AddScoped<IPokemonInformationService, PokemonInformationService>();
 
     var app = builder.Build();
 

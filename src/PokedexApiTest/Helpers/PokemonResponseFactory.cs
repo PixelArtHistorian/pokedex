@@ -10,6 +10,11 @@ namespace PokedexApiTest.Helpers
 {
     public static class PokemonResponseFactory
     {
+        public static PokemonResponse CreatePokemonResponse()
+        {
+            var fixture = new Fixture();
+            return fixture.Create<PokemonResponse>();
+        }
         public static PokemonResponse CreatePokemonResponse(
             string pokemonName,
             string description,
