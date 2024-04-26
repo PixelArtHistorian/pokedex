@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using PokedexApi.Domain;
-using PokedexApi.Infrastructure.DTO;
+using PokedexApi.Infrastructure.Response;
 using PokedexApiTest.Helpers;
 using System.Text.RegularExpressions;
 

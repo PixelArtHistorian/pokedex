@@ -10,7 +10,7 @@ using PokedexApi.Domain;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
-using PokedexApi.Infrastructure.DTO;
+using PokedexApi.Infrastructure.Response;
 using PokedexApiTest.Helpers;
 using System.Net;
 using System.Net.Mail;

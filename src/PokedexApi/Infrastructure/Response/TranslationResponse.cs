@@ -1,4 +1,4 @@
-﻿namespace PokedexApi.Infrastructure.DTO
+﻿namespace PokedexApi.Infrastructure.Response
 {
     public class TranslationResponse
     {

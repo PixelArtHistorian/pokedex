@@ -2,7 +2,7 @@
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
-using PokedexApi.Infrastructure.DTO;
+using PokedexApi.Infrastructure.Response;
 
 namespace PokedexApi.Domain
 {
@@ -31,7 +31,8 @@ namespace PokedexApi.Domain
 
             try
             {
-                var response = await _translatorClient.TranslateTextAsync(pokemonInformation.Value.Description);
+                var endpoint = PickTranslationEndpoint(pokemonInformation.Value);
+                var response = await _translatorClient.TranslateTextAsync(endpoint, pokemonInformation.Value.Description);
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogDebug("Could not translate description {@pokemonInformation.Value}", pokemonInformation.Value);
@@ -53,6 +54,15 @@ namespace PokedexApi.Domain
                 _logger.LogError("Unhandled exception {@ex}", ex);
                 return pokemonInformation;
             }
+        }
+
+        private string PickTranslationEndpoint(PokemonInformation pokemonInformation)
+        {
+            if (pokemonInformation.Habitat == "cave" || pokemonInformation.IsLegendary)
+            {
+                return "yoda.json";
+            }
+            return "shakespeare.json";
         }
     }
 }
