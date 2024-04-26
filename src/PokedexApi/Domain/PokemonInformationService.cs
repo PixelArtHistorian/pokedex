@@ -29,6 +29,11 @@ namespace PokedexApi.Domain
 
         public async Task<IResult> GetPokemonInformationAsync(string pokemonName)
         {
+            if (pokemonName is null)
+            {
+                throw new ArgumentNullException(nameof(pokemonName));
+            }
+
             _logger.LogDebug("Processing equest {@pokemonName}", pokemonName);
 
             var validationResult = _validator.Validate(pokemonName);

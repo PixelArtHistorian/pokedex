@@ -7,6 +7,8 @@ namespace PokedexApi.Domain
     {
         public PokemonNameValidator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(name => name)
                 .NotEmpty()
                 .WithMessage("Pokemon name cannot be empty.")
