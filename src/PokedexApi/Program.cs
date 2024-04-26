@@ -5,6 +5,8 @@ using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
 using PokedexApi.Infrastructure.DTO;
 using Serilog;
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,9 +44,10 @@ try
         app.UseSwaggerUI();
     }
 
-    app.MapGet("/pokemon/{pokemonName}", (string pokemonName, IPokemonInformationService service) =>
+    app.MapGet("/pokemon/{pokemonName}", async (string pokemonName, IPokemonInformationService service) =>
         {
-            return service.GetPokemonInformationAsync(pokemonName);
+            var result = await service.GetPokemonInformationAsync(pokemonName);
+            return result.ToMinimalApiResult();
         })
         .WithOpenApi();
 

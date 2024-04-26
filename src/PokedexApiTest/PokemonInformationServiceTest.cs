@@ -27,8 +27,6 @@ namespace PokedexApiTest
         Mock<IMapper<PokemonResponse, PokemonInformation>> MockMapper { get; set; }
         Mock<ILogger<PokemonInformationService>> MockLogger { get; set; }
         PokemonInformationService Sut { get; set; }
-        readonly string baseAddress = "https://www.notarealaddress.gov";
-
         public PokemonInformationServiceTest()
         {
             Fixture = new Fixture();
@@ -66,7 +64,7 @@ namespace PokedexApiTest
             //Act
             var result = await Sut.GetPokemonInformationAsync(pokemonName);
             //Assert
-            result.Should().BeAssignableTo<Ok<PokemonInformation>>();
+            result.IsSuccess.Should().BeTrue();
         }
 
         [Fact]
@@ -96,7 +94,8 @@ namespace PokedexApiTest
             //Act
             var result = await Sut.GetPokemonInformationAsync(pokemonName);
             //Assert
-            result.Should().BeAssignableTo<ProblemHttpResult>();
+            result.IsSuccess.Should().BeFalse();
+            result.Status.Should().Be(Ardalis.Result.ResultStatus.Invalid);
         }
 
         [Fact]
@@ -117,7 +116,8 @@ namespace PokedexApiTest
             //Act
             var result = await Sut.GetPokemonInformationAsync(pokemonName);
             //Assert
-            result.Should().BeAssignableTo<NotFound>();
+            result.IsSuccess.Should().BeFalse();
+            result.Status.Should().Be(Ardalis.Result.ResultStatus.NotFound);
         }
 
         [Fact]
@@ -138,7 +138,8 @@ namespace PokedexApiTest
             //Act
             var result = await Sut.GetPokemonInformationAsync(pokemonName);
             //Assert
-            result.Should().BeAssignableTo<ProblemHttpResult>();
+            result.IsSuccess.Should().BeFalse();
+            result.Status.Should().Be(Ardalis.Result.ResultStatus.Error);
         }
 
         private static HttpResponseMessage CreateMockResponse(HttpStatusCode httpStatusCode)

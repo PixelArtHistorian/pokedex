@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Ardalis.Result;
+using FluentValidation;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
@@ -25,7 +26,7 @@ namespace PokedexApi.Domain
             _logger = logger;
         }
 
-        public async Task<IResult> GetPokemonInformationAsync(string pokemonName)
+        public async Task<Result<PokemonInformation>> GetPokemonInformationAsync(string pokemonName)
         {
             if (pokemonName is null)
             {
@@ -35,7 +36,9 @@ namespace PokedexApi.Domain
             var validationResult = await _validator.ValidateAsync(pokemonName);
             if (!validationResult.IsValid)
             {
-                return Results.ValidationProblem(validationResult.ToDictionary());
+                return Result.Invalid(validationResult.Errors
+                    .Select(x => new ValidationError(x.ErrorMessage))
+                    .ToArray());
             }
 
             try
@@ -44,18 +47,18 @@ namespace PokedexApi.Domain
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return Results.NotFound();
+                    return Result.NotFound();
                 }
 
                 var pokemonResponse = await response.Content.ReadFromJsonAsync<PokemonResponse>();
                 var pokemonInformation = _mapper.Map(pokemonResponse!);
 
-                return Results.Ok(pokemonInformation);
+                return Result.Success(pokemonInformation);
             }
             catch (Exception ex)
             {
                 _logger.LogError("Unhandled exception {@ex}", ex);
-                return Results.Problem();
+                return Result.Error();
             }
         }
     }
