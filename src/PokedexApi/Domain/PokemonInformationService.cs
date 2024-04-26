@@ -29,12 +29,12 @@ namespace PokedexApi.Domain
 
         public async Task<IResult> GetPokemonInformationAsync(string pokemonName)
         {
-            _logger.LogDebug("Request {}", pokemonName);
+            _logger.LogDebug("Processing equest {@pokemonName}", pokemonName);
 
             var validationResult = _validator.Validate(pokemonName);
             if (!validationResult.IsValid)
             {
-                _logger.LogDebug("Pokemon name is not valid {}", pokemonName);
+                _logger.LogDebug("Pokemon name is not valid {@pokemonName}", pokemonName);
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
@@ -52,7 +52,7 @@ namespace PokedexApi.Domain
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogDebug("Could not find pokemon information {}", pokemonName);
+                    _logger.LogDebug("Could not find pokemon information {@pokemonName}", pokemonName);
                     return Results.NotFound("Not Found");
                 }
 
@@ -60,13 +60,13 @@ namespace PokedexApi.Domain
 
                 if(pokemonResponse == null)
                 {
-                    _logger.LogDebug("Could not parse response {}", pokemonName);
+                    _logger.LogDebug("Could not parse response {@pokemonName}", pokemonName);
                     return Results.UnprocessableEntity();
                 }
 
                 var pokemonInformation = _mapper.Map(pokemonResponse);
 
-                _logger.LogDebug("Found pokemon information {}", pokemonInformation);
+                _logger.LogDebug("Found pokemon information {@pokemonInformation}", pokemonInformation);
                 return Results.Ok(pokemonInformation);
             }
             catch (Exception)

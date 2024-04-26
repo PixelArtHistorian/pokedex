@@ -8,13 +8,15 @@ namespace PokedexApi.Domain
         public PokemonNameValidator()
         {
             RuleFor(name => name)
-                .NotEmpty().WithMessage("Pokemon name cannot be empty.")
-                .Must(BeARealPokemon).WithMessage("Invalid Pokemon name.");
+                .NotEmpty()
+                .WithMessage("Pokemon name cannot be empty.")
+                .Must(BeValidPokemonName)
+                .WithMessage("Invalid Pokemon name, pokemon names must be lowercase and not include any number or special character.");
         }
 
-        private bool BeARealPokemon(string name)
+        private bool BeValidPokemonName(string name)
         {
-            return Regex.IsMatch(name, "^[a-zA-Z]+$");
+            return Regex.IsMatch(name, "^[a-z]+$");
         }
     }
 }

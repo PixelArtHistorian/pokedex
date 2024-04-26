@@ -7,17 +7,22 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json");
+
 builder.Services.AddSerilog();
 
-Log.Logger = new LoggerConfiguration()
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.Console()
     .CreateBootstrapLogger();
+
+Log.Logger = logger;
 
 Log.Information("Starting application");
 
 try
 {
-    builder.Services.AddSerilog();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddHttpClient();
