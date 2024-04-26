@@ -1,4 +1,6 @@
-﻿using PokedexApi.Domain.Interfaces;
+﻿using Ardalis.Result;
+using PokedexApi.Domain.Interfaces;
+using PokedexApi.Domain.Models;
 
 namespace PokedexApi.Domain
 {
@@ -10,7 +12,8 @@ namespace PokedexApi.Domain
             
         }
 
-        public Task<IResult> GetPokemonInformationAsync(string pokemonName)
+
+        Task<Result<PokemonInformation>> IPokemonInformationService.GetPokemonInformationAsync(string pokemonName)
         {
             throw new NotImplementedException();
         }
