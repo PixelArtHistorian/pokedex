@@ -4,6 +4,7 @@ using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.DTO;
 using System.Text;
 using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 namespace PokedexApi.Domain
 {
@@ -13,6 +14,8 @@ namespace PokedexApi.Domain
         private IValidator<string> _validator;
         private IMapper<PokemonResponse, PokemonInformation> _mapper;
         private ILogger _logger;
+
+        private readonly string _baseUri = "https://pokeapi.co/api/v2/";
 
         public PokemonInformationService(
             IHttpClientFactory httpClientFactory,
@@ -44,15 +47,9 @@ namespace PokedexApi.Domain
 
             try
             {
-                var client = _httpClientFactory.CreateClient();
-                StringBuilder builder = new StringBuilder();
-                var url = builder
-                    .Append("https://pokeapi.co/api/v2/")
-                    .Append("pokemon-species/")
-                    .Append(pokemonName)
-                    .ToString();
+                var client = CreatePokemonClient();
 
-                var response = await client.GetAsync(url);
+                var response = await client.GetAsync($"pokemon-species/{pokemonName}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -60,23 +57,26 @@ namespace PokedexApi.Domain
                     return Results.NotFound("Not Found");
                 }
 
-                var pokemonResponse = JsonSerializer.Deserialize<PokemonResponse>(await response.Content.ReadAsStringAsync());
+                var pokemonResponse = await response.Content.ReadFromJsonAsync<PokemonResponse>();
 
-                if (pokemonResponse == null)
-                {
-                    _logger.LogDebug("Could not parse response {@pokemonName}", pokemonName);
-                    return Results.UnprocessableEntity();
-                }
-
-                var pokemonInformation = _mapper.Map(pokemonResponse);
+                var pokemonInformation = _mapper.Map(pokemonResponse!);
 
                 _logger.LogDebug("Found pokemon information {@pokemonInformation}", pokemonInformation);
                 return Results.Ok(pokemonInformation);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError("Unhandled exception {@ex}", ex);
                 return Results.Problem();
             }
         }
+
+        private HttpClient CreatePokemonClient()
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_baseUri);
+            return client;
+        }
+        
     }
 }
