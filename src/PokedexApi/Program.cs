@@ -5,6 +5,8 @@ using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
 using PokedexApi.Infrastructure.DTO;
 using Serilog;
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,9 +51,10 @@ try
 
     var pokemomRouteBuilder = app.MapGroup("/pokemon");
 
-    pokemomRouteBuilder.MapGet("/{pokemonName}", (string pokemonName, IPokemonInformationService service) =>
+    pokemomRouteBuilder.MapGet("/{pokemonName}", async (string pokemonName, IPokemonInformationService service) =>
     {
-            return service.GetPokemonInformationAsync(pokemonName);
+        var result = await service.GetPokemonInformationAsync(pokemonName);
+        return result.ToMinimalApiResult();
     })
     .WithOpenApi();
 
