@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.VisualBasic;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.DTO;
@@ -63,7 +62,7 @@ namespace PokedexApi.Domain
 
                 var pokemonResponse = JsonSerializer.Deserialize<PokemonResponse>(await response.Content.ReadAsStringAsync());
 
-                if(pokemonResponse == null)
+                if (pokemonResponse == null)
                 {
                     _logger.LogDebug("Could not parse response {@pokemonName}", pokemonName);
                     return Results.UnprocessableEntity();
