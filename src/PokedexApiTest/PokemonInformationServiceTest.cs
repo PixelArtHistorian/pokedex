@@ -10,7 +10,7 @@ using PokedexApi.Domain;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
-using PokedexApi.Infrastructure.DTO;
+using PokedexApi.Infrastructure.Response;
 using PokedexApiTest.Helpers;
 using System.Net;
 using System.Net.Mail;
@@ -47,7 +47,10 @@ namespace PokedexApiTest
         {
             //Arrange
             var pokemonName = "squirtle";
-            HttpResponseMessage httpResponseMessage = CreateMockResponse(HttpStatusCode.OK);
+            HttpResponseMessage httpResponseMessage = HttpResponseFactory
+                .CreateMockResponse(
+                    HttpStatusCode.OK, 
+                    PokemonResponseFactory.CreatePokemonResponse());
 
             var pokemonInformation = Fixture.Create<PokemonInformation>();
 
@@ -103,7 +106,11 @@ namespace PokedexApiTest
         {
             //Arrange
             var pokemonName = "squirtle";
-            HttpResponseMessage httpResponseMessage = CreateMockResponse(HttpStatusCode.NotFound);
+            HttpResponseMessage httpResponseMessage = HttpResponseFactory
+                .CreateMockResponse(
+                    HttpStatusCode.NotFound,
+                    PokemonResponseFactory.CreatePokemonResponse());
+
 
             var pokemonInformation = Fixture.Create<PokemonInformation>();
 
@@ -140,16 +147,6 @@ namespace PokedexApiTest
             //Assert
             result.IsSuccess.Should().BeFalse();
             result.Status.Should().Be(Ardalis.Result.ResultStatus.Error);
-        }
-
-        private static HttpResponseMessage CreateMockResponse(HttpStatusCode httpStatusCode)
-        {
-            var pokemonResponse = PokemonResponseFactory.CreatePokemonResponse();
-            var httpResponseMessage = new HttpResponseMessage(httpStatusCode)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(PokemonResponseFactory.CreatePokemonResponse())),
-            };
-            return httpResponseMessage;
         }
     }
 }

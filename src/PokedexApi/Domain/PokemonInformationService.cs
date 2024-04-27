@@ -4,7 +4,7 @@ using FluentValidation;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
-using PokedexApi.Infrastructure.DTO;
+using PokedexApi.Infrastructure.Response;
 
 namespace PokedexApi.Domain
 {

@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using PokedexApi.Infrastructure.DTO;
+using PokedexApi.Infrastructure.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
