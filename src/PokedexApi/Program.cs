@@ -30,7 +30,16 @@ try
     builder.Services.AddSwaggerGen();
     builder.Services.AddHttpClient();
 
-    builder.Services.Configure<TranslationServiceOptions>(builder.Configuration.GetSection(nameof(TranslationServiceOptions)));
+
+    builder.Services.Configure<PokemonSpeciesClientOptions>(builder.Configuration
+        .GetSection(nameof(PokemonSpeciesClientOptions)));
+
+    builder.Services.Configure<TranslationClientOptions>(builder.Configuration
+        .GetSection(nameof(TranslationClientOptions)));
+
+    builder.Services.Configure<TranslationServiceOptions>(builder.Configuration
+        .GetSection(nameof(TranslationServiceOptions)));
+
 
     builder.Services.ConfigureHttpJsonOptions(options =>
     {
