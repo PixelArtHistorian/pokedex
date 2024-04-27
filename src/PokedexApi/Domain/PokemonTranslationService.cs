@@ -1,4 +1,6 @@
 ﻿using Ardalis.Result;
+using Microsoft.Extensions.Options;
+using PokedexApi.Configuration;
 using PokedexApi.Domain.Interfaces;
 using PokedexApi.Domain.Models;
 using PokedexApi.Infrastructure.Client;
@@ -6,18 +8,21 @@ using PokedexApi.Infrastructure.Response;
 
 namespace PokedexApi.Domain
 {
-    public class PokemonTranslationService: IPokemonTranslationService
+    public class PokemonTranslationService : IPokemonTranslationService
     {
         IPokemonInformationService _pokemonInformationService;
         ITranslationClient _translatorClient;
+        TranslationServiceOptions _translationServiceOptions;
         ILogger _logger;
         public PokemonTranslationService(
-            IPokemonInformationService pokemonInformationService,  
-            ITranslationClient translatorClient, 
+            IPokemonInformationService pokemonInformationService,
+            ITranslationClient translatorClient,
+            IOptions<TranslationServiceOptions> translationServiceOptions,
             ILogger<PokemonTranslationService> logger)
         {
             _pokemonInformationService = pokemonInformationService;
             _translatorClient = translatorClient;
+            _translationServiceOptions = translationServiceOptions.Value;
             _logger = logger;
         }
 
@@ -38,15 +43,15 @@ namespace PokedexApi.Domain
                     _logger.LogDebug("Could not translate description {@pokemonInformation.Value}", pokemonInformation.Value);
                     return pokemonInformation;
                 }
-            
+
                 var translationResponse = await response.Content.ReadFromJsonAsync<TranslationResponse>();
-                if(translationResponse is null)
+                if (translationResponse is null)
                 {
                     _logger.LogDebug("Could not parse translation {@response}", response);
                     return pokemonInformation;
                 }
-                var translatedInformation = pokemonInformation.Value with { Description = translationResponse.contents.translated };     
-            
+                var translatedInformation = pokemonInformation.Value with { Description = translationResponse.contents.translated };
+
                 return Result.Success(translatedInformation);
             }
             catch (Exception ex)
@@ -60,9 +65,9 @@ namespace PokedexApi.Domain
         {
             if (pokemonInformation.Habitat == "cave" || pokemonInformation.IsLegendary)
             {
-                return "yoda.json";
+                return _translationServiceOptions.YodishEndpoint;
             }
-            return "shakespeare.json";
+            return _translationServiceOptions.ShakespeareanEndpoint;
         }
     }
 }

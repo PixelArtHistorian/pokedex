@@ -6,6 +6,7 @@ using PokedexApi.Infrastructure.Client;
 using Serilog;
 using Ardalis.Result.AspNetCore;
 using PokedexApi.Infrastructure.Response;
+using PokedexApi.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddHttpClient();
+
+    builder.Services.Configure<TranslationServiceOptions>(builder.Configuration.GetSection(nameof(TranslationServiceOptions)));
 
     builder.Services.ConfigureHttpJsonOptions(options =>
     {
