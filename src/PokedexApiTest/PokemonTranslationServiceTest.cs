@@ -112,5 +112,111 @@ namespace PokedexApiTest
                 v => v.TranslateTextAsync(endpoint, pokemonInfo.Description),
                 Times.Exactly(1));
         }
+
+        [Theory]
+        [MemberData(nameof(FailureTestData))]
+        public async Task GetPokemonInformationTranslationAsync_ReturnsFailure_WhenPokemonInformationServiceFails(Result<PokemonInformation> failure)
+        {
+            //Arrange
+            string pokemonName = "bulbasaur";
+            MockInfoService
+                .Setup(s => s.GetPokemonInformationAsync(It.IsAny<string>()))
+                .ReturnsAsync(failure);
+            //Act
+            var res = await Sut.GetPokemonInformationTranslationAsync(pokemonName);
+            //Assert
+            res.IsSuccess.Should().Be(failure.IsSuccess);
+            res.Status.Should().Be(failure.Status);
+            res.Value.Should().Be(failure.Value);
+        }
+
+        public static IEnumerable<object[]> FailureTestData()
+        {
+
+            yield return new object[] { Result<PokemonInformation>.Invalid(new ValidationError[]
+            {
+                new ValidationError("Error1"),
+                new ValidationError("Error2"),
+            }) };
+            yield return new object[] { Result<PokemonInformation>.NotFound() };
+            yield return new object[] { Result<PokemonInformation>.Error() };
+        }
+
+        [Fact]
+        public async Task GetPokemonInformationTranslationAsync_ReturnsUntranslatedInfo_WhenTranslationFails()
+        {
+            //Arrange
+            var expectedResult = Fixture.Create<PokemonInformation>();
+            var httpResponse = HttpResponseFactory
+                .CreateMockResponse(
+                    System.Net.HttpStatusCode.NotFound,
+                    string.Empty);
+
+            MockInfoService
+                .Setup(s => s.GetPokemonInformationAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result.Success(expectedResult));
+            MockTranslationClient
+                .Setup(s => s.TranslateTextAsync(It.IsAny<string>(), expectedResult.Description))
+                .ReturnsAsync(httpResponse);
+
+            //Act
+            var result = await Sut.GetPokemonInformationTranslationAsync(expectedResult.Name);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Name.Should().Be(expectedResult.Name);
+            result.Value.Description.Should().Be(expectedResult.Description);
+            result.Value.Habitat.Should().Be(expectedResult.Habitat);
+            result.Value.IsLegendary.Should().Be(expectedResult.IsLegendary);
+        }
+
+        [Fact]
+        public async Task GetPokemonInformationTranslationAsync_ReturnsUntranslatedInfo_WhenTranslationClientThrowsException()
+        {
+            //Arrange
+            var expectedResult = Fixture.Create<PokemonInformation>();
+
+            MockInfoService
+                .Setup(s => s.GetPokemonInformationAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result.Success(expectedResult));
+            MockTranslationClient
+                .Setup(s => s.TranslateTextAsync(It.IsAny<string>(), expectedResult.Description))
+                .ThrowsAsync(new Exception());
+
+            //Act
+            var result = await Sut.GetPokemonInformationTranslationAsync(expectedResult.Name);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Name.Should().Be(expectedResult.Name);
+            result.Value.Description.Should().Be(expectedResult.Description);
+            result.Value.Habitat.Should().Be(expectedResult.Habitat);
+            result.Value.IsLegendary.Should().Be(expectedResult.IsLegendary);
+        }
+
+        [Fact]
+        public async Task GetPokemonInformationTranslationAsync_ReturnsUntranslatedInfo_WhenTranslationParsingFails()
+        {
+            //Arrange
+            var expectedResult = Fixture.Create<PokemonInformation>();
+            var httpResponse = HttpResponseFactory
+                .CreateMockResponse(
+                    System.Net.HttpStatusCode.OK,
+                    string.Empty);
+
+            MockInfoService
+                .Setup(s => s.GetPokemonInformationAsync(It.IsAny<string>()))
+                .ReturnsAsync(Result.Success(expectedResult));
+            MockTranslationClient
+                .Setup(s => s.TranslateTextAsync(It.IsAny<string>(), expectedResult.Description))
+                .ReturnsAsync(httpResponse);
+
+            //Act
+            var result = await Sut.GetPokemonInformationTranslationAsync(expectedResult.Name);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Name.Should().Be(expectedResult.Name);
+            result.Value.Description.Should().Be(expectedResult.Description);
+            result.Value.Habitat.Should().Be(expectedResult.Habitat);
+            result.Value.IsLegendary.Should().Be(expectedResult.IsLegendary);
+        }
     }
 }
