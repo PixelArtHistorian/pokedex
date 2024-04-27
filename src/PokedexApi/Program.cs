@@ -28,29 +28,29 @@ try
 {
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+
     builder.Services.AddHttpClient();
-
-
-    builder.Services.Configure<PokemonSpeciesClientOptions>(builder.Configuration
-        .GetSection(nameof(PokemonSpeciesClientOptions)));
-
-    builder.Services.Configure<TranslationClientOptions>(builder.Configuration
-        .GetSection(nameof(TranslationClientOptions)));
-
-    builder.Services.Configure<TranslationServiceOptions>(builder.Configuration
-        .GetSection(nameof(TranslationServiceOptions)));
-
-
     builder.Services.ConfigureHttpJsonOptions(options =>
     {
         options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
     //register pokemon information service
+    builder.Services.Configure<PokemonSpeciesClientOptions>(builder.Configuration
+        .GetSection(nameof(PokemonSpeciesClientOptions)));
+
     builder.Services.AddScoped<IPokemonSpeciesClient, PokemonSpeciesClient>();
     builder.Services.AddScoped<IValidator<string>, PokemonNameValidator>();
-    builder.Services.AddScoped<IMapper<PokemonResponse,PokemonInformation>, PokemonMapper>();
+    builder.Services.AddScoped<IMapper<PokemonResponse, PokemonInformation>, PokemonMapper>();
     builder.Services.AddScoped<IPokemonInformationService, PokemonInformationService>();
+
+    //register pokemon translation service
+    builder.Services.Configure<TranslationClientOptions>(builder.Configuration
+        .GetSection(nameof(TranslationClientOptions)));
+
+    builder.Services.Configure<TranslationServiceOptions>(builder.Configuration
+        .GetSection(nameof(TranslationServiceOptions)));
+
     builder.Services.AddScoped<ITranslationClient, TranslationClient>();
     builder.Services.AddScoped<IPokemonTranslationService, PokemonTranslationService>();
 
