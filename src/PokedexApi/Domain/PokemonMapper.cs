@@ -13,31 +13,27 @@ namespace PokedexApi.Domain
         {
             return new PokemonInformation
             {
-                Name = source.name,
-                Description = GetPokemonEnglishDescription(source.flavor_text_entries),
-                Habitat = GetPokemonHabitat(source.habitat),
-                IsLegendary = source.is_legendary,
+                Name = source.Name,
+                Description = GetPokemonEnglishDescription(source.FlavorTextEntries),
+                Habitat = GetPokemonHabitat(source.Habitat!),
+                IsLegendary = source.IsLegendary,
             };
         }
 
         private string GetPokemonHabitat(Habitat habitat)
         {
-            if (habitat == null) 
+            if (habitat == null || habitat.Name == null) 
             { 
                 return placeholderHabitat;
             }
-            if(habitat.name == null)
-            {
-                return placeholderHabitat;
-            }
-            return habitat.name;
+            return habitat.Name;
         }
 
-        private string GetPokemonEnglishDescription(Flavor_Text_Entries[] entries)
+        private string GetPokemonEnglishDescription(IEnumerable<FlavorTextEntries> entries)
         {
             var description = 
                 entries
-                .FirstOrDefault(e => e.language.name.Equals("en"))?.flavor_text ??
+                .FirstOrDefault(e => e.Language.Name.Equals("en"))?.FlavorText ??
                 placeholderDescription;
 
             return Regex.Replace(description, @"\s+", " ", RegexOptions.Compiled);

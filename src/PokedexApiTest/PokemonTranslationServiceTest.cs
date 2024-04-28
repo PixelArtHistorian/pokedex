@@ -53,7 +53,7 @@ namespace PokedexApiTest
                 System.Net.HttpStatusCode.OK,
                 translation);
 
-            var expectedResult = Result.Success(pokemonInfo with { Description = translation.contents.translated });
+            var expectedResult = Result.Success(pokemonInfo with { Description = translation.Contents.Translated });
             
             MockInfoService
                 .Setup(s => s.GetPokemonInformationAsync(It.IsAny<string>()))
@@ -67,7 +67,7 @@ namespace PokedexApiTest
             //Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Name.Should().Be(pokemonInfo.Name);
-            result.Value.Description.Should().Be(translation.contents.translated);
+            result.Value.Description.Should().Be(translation.Contents.Translated);
             result.Value.Habitat.Should().Be(pokemonInfo.Habitat);
             result.Value.IsLegendary.Should().Be(pokemonInfo.IsLegendary);
         }
@@ -91,7 +91,7 @@ namespace PokedexApiTest
                 System.Net.HttpStatusCode.OK,
                 translation);
 
-            var expectedResult = Result.Success(pokemonInfo with { Description = translation.contents.translated });
+            var expectedResult = Result.Success(pokemonInfo with { Description = translation.Contents.Translated });
 
             MockInfoService
                 .Setup(s => s.GetPokemonInformationAsync(It.IsAny<string>()))
@@ -105,7 +105,7 @@ namespace PokedexApiTest
             //Assert
             result.IsSuccess.Should().BeTrue();
             result.Value.Name.Should().Be(pokemonInfo.Name);
-            result.Value.Description.Should().Be(translation.contents.translated);
+            result.Value.Description.Should().Be(translation.Contents.Translated);
             result.Value.Habitat.Should().Be(pokemonInfo.Habitat);
             result.Value.IsLegendary.Should().Be(pokemonInfo.IsLegendary);
             MockTranslationClient.Verify(

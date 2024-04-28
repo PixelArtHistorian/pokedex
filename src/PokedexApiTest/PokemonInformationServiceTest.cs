@@ -1,9 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using PokedexApi.Domain;
@@ -13,8 +10,6 @@ using PokedexApi.Infrastructure.Client;
 using PokedexApi.Infrastructure.Response;
 using PokedexApiTest.Helpers;
 using System.Net;
-using System.Net.Mail;
-using System.Text.Json;
 
 namespace PokedexApiTest
 {
@@ -49,7 +44,7 @@ namespace PokedexApiTest
             var pokemonName = "squirtle";
             HttpResponseMessage httpResponseMessage = HttpResponseFactory
                 .CreateMockResponse(
-                    HttpStatusCode.OK, 
+                    HttpStatusCode.OK,
                     PokemonResponseFactory.CreatePokemonResponse());
 
             var pokemonInformation = Fixture.Create<PokemonInformation>();
@@ -68,6 +63,10 @@ namespace PokedexApiTest
             var result = await Sut.GetPokemonInformationAsync(pokemonName);
             //Assert
             result.IsSuccess.Should().BeTrue();
+            result.Value.Name.Should().Be(pokemonInformation.Name);
+            result.Value.Description.Should().Be(pokemonInformation.Description);
+            result.Value.Habitat.Should().Be(pokemonInformation.Habitat);
+            result.Value.IsLegendary.Should().Be(pokemonInformation.IsLegendary);
         }
 
         [Fact]
