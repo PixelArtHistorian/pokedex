@@ -15,7 +15,7 @@ namespace PokedexApiIntegrationTest
             //Arrange
             await using var application = new WebApplicationFactory<Program>();
             using var client = application.CreateClient();
-            var expectedResult = await ResultFactory.GetPokemonInformationFromPokemonApiAsync();
+            var expectedResult = await DependencyClientHelper.GetPokemonInformationFromPokemonApiAsync();
             //Act
             var result = await client.GetAsync($"/pokemon/{expectedResult.Name}");
             var content = await result.Content.ReadFromJsonAsync<PokemonInformation>();
