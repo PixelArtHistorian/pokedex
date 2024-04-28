@@ -50,7 +50,7 @@ namespace PokedexApi.Domain
                     _logger.LogDebug("Could not parse translation {@response}", response);
                     return pokemonInformation;
                 }
-                var translatedInformation = pokemonInformation.Value with { Description = translationResponse.contents.translated };
+                var translatedInformation = pokemonInformation.Value with { Description = translationResponse.Contents.Translated };
 
                 return Result.Success(translatedInformation);
             }

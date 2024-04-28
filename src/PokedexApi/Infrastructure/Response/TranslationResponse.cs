@@ -1,21 +1,16 @@
-﻿namespace PokedexApi.Infrastructure.Response
+﻿using System.Text.Json.Serialization;
+
+namespace PokedexApi.Infrastructure.Response
 {
     public class TranslationResponse
     {
-        public Contents contents { get; set; }
-        public Success success { get; set; }
+        [JsonPropertyName("contents")]
+        public Contents Contents { get; set; } = new();
     }
 
     public class Contents
     {
-        public string text { get; set; }
-        public string translated { get; set; }
-        public string translation { get; set; }
+        [JsonPropertyName("translated")]
+        public string Translated { get; set; } = string.Empty;
     }
-
-    public class Success
-    {
-        public int total { get; set; }
-    }
-
 }
