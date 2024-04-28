@@ -27,5 +27,31 @@ namespace PokedexApiIntegrationTest
             content?.Habitat.Should().Be(expectedResult.Habitat);
             content?.IsLegendary.Should().Be(expectedResult.IsLegendary);
         }
+        [Theory]
+        [InlineData("ABC")]
+        [InlineData("abc123")]
+        [InlineData("ABC123")]
+        public async Task Pokemon_ReturnsBadRequest_WhenPokemonNameIsInvalid(string pokemonName)
+        {
+            //Arrange
+            await using var application = new WebApplicationFactory<Program>();
+            using var client = application.CreateClient();
+            //Act
+            var result = await client.GetAsync($"/pokemon/{pokemonName}");
+            //Assert
+            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+        [Theory]
+        [InlineData("fakename")]
+        public async Task Pokemon_ReturnsNotFound_WhenPokemonNameIsNotReal(string pokemonName)
+        {
+            //Arrange
+            await using var application = new WebApplicationFactory<Program>();
+            using var client = application.CreateClient();
+            //Act
+            var result = await client.GetAsync($"/pokemon/{pokemonName}");
+            //Assert
+            result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }
