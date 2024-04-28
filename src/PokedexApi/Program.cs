@@ -92,3 +92,6 @@ finally
 {
     await Log.CloseAndFlushAsync();
 }
+
+//Defined program as partial for integration testing, if deleted integration tests will FAIL
+public partial class Program { }
