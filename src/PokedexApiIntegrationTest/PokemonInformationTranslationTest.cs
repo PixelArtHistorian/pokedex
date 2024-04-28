@@ -17,11 +17,11 @@ namespace PokedexApiIntegrationTest
             //Arrange
             await using var application = new WebApplicationFactory<Program>();
             using var client = application.CreateClient();
-            var expectedResult = await ResultFactory.GetPokemonInformationFromPokemonApiAsync();
+            var expectedResult = await DependencyClientHelper.GetPokemonInformationFromPokemonApiAsync();
             //Act
             var result = await client.GetAsync($"/pokemon/{expectedResult.Name}");
             var content = await result.Content.ReadFromJsonAsync<PokemonInformation>();
-            var expectedtranslation = await ResultFactory.GetTranslationFromApiAsync(endpoint, name);
+            var expectedtranslation = await DependencyClientHelper.GetTranslationFromApiAsync(endpoint, name);
             //Assert
             result.StatusCode.Should().Be(HttpStatusCode.OK);
             content.Should().NotBeNull();

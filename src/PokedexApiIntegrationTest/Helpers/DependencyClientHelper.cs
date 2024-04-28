@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace PokedexApiIntegrationTest.Helpers
 {
-    public static class ResultFactory
+    public static class DependencyClientHelper
     {
         private static string placeholderDescription = "No english description available";
         private static string placeholderHabitat = "This pokemon has no known habitat";
