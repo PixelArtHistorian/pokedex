@@ -2,7 +2,7 @@ version: "1"
 services:
   api:
     container_name: buzzwole
-    image: "pokedexapi:0.2"
+    image: "pokedexapi:0.3"
     build: 
       context: .
       dockerfile: ./Dockerfile
