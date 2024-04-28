@@ -58,8 +58,11 @@ try
     //Add basic caching
     builder.Services.AddOutputCache(options=>
     {
-        options.AddBasePolicy(policy => policy
-            .With(cacheContext => cacheContext.HttpContext.Response.StatusCode == 200));
+        options.DefaultExpirationTimeSpan = TimeSpan.FromMinutes(30);
+        options.AddBasePolicy(policy => 
+        {
+            policy.With(cacheContext => cacheContext.HttpContext.Response.StatusCode == 200);
+        });
     });
 
     var app = builder.Build();
