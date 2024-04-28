@@ -25,21 +25,21 @@ namespace PokedexApiTest.Helpers
 
             var fixture = new Fixture();
             Language lang = fixture.Build<Language>()
-                .With(l => l.name, language)
+                .With(l => l.Name, language)
                 .Create();
 
-            Flavor_Text_Entries entry = fixture.Build<Flavor_Text_Entries>()
-                .With(f => f.flavor_text, description)
-                .With(f => f.language, lang)
+            FlavorTextEntries entry = fixture.Build<FlavorTextEntries>()
+                .With(f => f.FlavorText, description)
+                .With(f => f.Language, lang)
                 .Create();
 
-            var entries = new Flavor_Text_Entries[] { entry };
+            var entries = new FlavorTextEntries[] { entry };
 
             PokemonResponse response = fixture.Build<PokemonResponse>()
-                .With(p => p.name, pokemonName)
-                .With(p => p.flavor_text_entries, entries)
-                .With(p => p.habitat, new Habitat { name = habitatName })
-                .With(p => p.is_legendary, isLegendary)
+                .With(p => p.Name, pokemonName)
+                .With(p => p.FlavorTextEntries, entries)
+                .With(p => p.Habitat, new Habitat { Name = habitatName })
+                .With(p => p.IsLegendary, isLegendary)
                 .Create();
             return response;
         }

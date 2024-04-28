@@ -3,7 +3,6 @@ using FluentAssertions;
 using PokedexApi.Domain;
 using PokedexApi.Infrastructure.Response;
 using PokedexApiTest.Helpers;
-using System.Text.RegularExpressions;
 
 
 namespace PokedexApiTest
@@ -87,7 +86,7 @@ namespace PokedexApiTest
             string language = "en";
             //Arrange
             PokemonResponse response = PokemonResponseFactory.CreatePokemonResponse(pokemonName, description, habitatName, isLegendary, language);
-            response.habitat = null!;
+            response.Habitat = null!;
             //Act
             var result = Sut.Map(response);
             //Assert
