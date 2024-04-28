@@ -7,7 +7,7 @@ using PokedexApiTest.Helpers;
 
 namespace PokedexApiTest
 {
-    [Trait("Category", "Mapper")]
+    [Trait("Unit", "Mapper")]
     public class PokemonMapperTest
     {
         Fixture Fixture { get; set; }

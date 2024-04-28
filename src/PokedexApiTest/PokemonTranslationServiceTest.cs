@@ -13,7 +13,7 @@ using PokedexApiTest.Helpers;
 
 namespace PokedexApiTest
 {
-    [Trait("Category", "PokemonTranslationService")]
+    [Trait("Unit", "PokemonTranslationService")]
     public class PokemonTranslationServiceTest
     {
         Fixture Fixture { get; set; }

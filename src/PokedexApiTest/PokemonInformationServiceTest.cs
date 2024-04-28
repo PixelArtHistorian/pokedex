@@ -13,7 +13,7 @@ using System.Net;
 
 namespace PokedexApiTest
 {
-    [Trait("Category", "PokemonInformationService")]
+    [Trait("Unit", "PokemonInformationService")]
     public class PokemonInformationServiceTest
     {
         Fixture Fixture { get; set; }

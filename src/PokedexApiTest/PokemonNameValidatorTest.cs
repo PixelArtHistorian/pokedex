@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace PokedexApiTest
 {
-    [Trait("Category","Validator")]
+    [Trait("Unit","Validator")]
     public class PokemonNameValidatorTest
     {
         public PokemonNameValidator Sut { get; set; }
