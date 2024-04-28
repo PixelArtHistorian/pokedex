@@ -7,6 +7,7 @@ using Serilog;
 using Ardalis.Result.AspNetCore;
 using PokedexApi.Infrastructure.Response;
 using PokedexApi.Configuration;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +55,16 @@ try
     builder.Services.AddScoped<ITranslationClient, TranslationClient>();
     builder.Services.AddScoped<IPokemonTranslationService, PokemonTranslationService>();
 
+    //Add basic caching
+    builder.Services.AddOutputCache(options=>
+    {
+        options.AddBasePolicy(policy => policy
+            .With(cacheContext => cacheContext.HttpContext.Response.StatusCode == 200));
+    });
+
     var app = builder.Build();
+
+    app.UseOutputCache();
 
     if (app.Environment.IsDevelopment())
     {
@@ -71,6 +81,7 @@ try
         var result = await service.GetPokemonInformationAsync(pokemonName);
         return result.ToMinimalApiResult();
     })
+    .CacheOutput()
     .WithOpenApi();
 
     pokemomRouteBuilder.MapGet(
@@ -80,6 +91,7 @@ try
         var result = await service.GetPokemonInformationTranslationAsync(pokemonName);
         return result.ToMinimalApiResult();
     })
+    .CacheOutput()
     .WithOpenApi();
 
     app.Run();
